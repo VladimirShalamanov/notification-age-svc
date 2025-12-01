@@ -47,13 +47,6 @@ public class NotificationController {
         return ResponseEntity.ok(responses);
     }
 
-    // Only for test - 7.Microservice Architecture
-//    @GetMapping("/hello")
-//    public ResponseEntity<String> sayHello(@RequestParam String name) {
-//
-//        return ResponseEntity.ok("Hello, {%s} user!".formatted(name));
-//    }
-
     @DeleteMapping
     public ResponseEntity<Void> deleteAll(@RequestParam("userId") UUID userId) {
 

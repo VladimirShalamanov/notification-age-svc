@@ -1,6 +1,6 @@
 package app.service;
 
-//import app.exception.NotificationPreferenceDisabledException;
+import app.exception.NotificationPreferenceDisabledException;
 import app.model.Notification;
 import app.model.NotificationPreference;
 import app.model.NotificationStatus;
@@ -39,8 +39,7 @@ public class NotificationService {
 
         NotificationPreference preference = preferenceService.getByUserId(request.getUserId());
 
-        boolean enabled = preference.isEnabled();
-        if (!enabled) {
+        if (!preference.isEnabled()) {
             throw new IllegalStateException("User with id=[%s] turned off their notifications.".formatted(request.getUserId()));
         }
 
@@ -53,7 +52,6 @@ public class NotificationService {
                 .deleted(false)
                 .build();
 
-        // Sending email
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(preference.getContactInfo());
         mailMessage.setSubject(request.getSubject());
@@ -88,8 +86,7 @@ public class NotificationService {
 
         NotificationPreference preference = preferenceService.getByUserId(userId);
         if (!preference.isEnabled()) {
-//            throw new NotificationPreferenceDisabledException("User does turned off their notifications.");
-            throw new RuntimeException("User does turned off their notifications.");
+            throw new NotificationPreferenceDisabledException("User does turned off their notifications.");
         }
 
         List<Notification> failedNotifications = getHistory(userId)
@@ -119,5 +116,10 @@ public class NotificationService {
             log.error("Failed email due to: {}", e.getMessage());
             notification.setStatus(NotificationStatus.FAILED);
         }
+    }
+
+    public NotificationPreference getPreferenceByUserId(UUID userId) {
+
+        return preferenceService.getByUserId(userId);
     }
 }
