@@ -59,6 +59,8 @@ public class NotificationService {
 
         sendMail(mailMessage, notification);
 
+        log.info("---Send notification for [%s].".formatted(preference.getContactInfo()));
+
         return notificationRepository.save(notification);
     }
 
@@ -80,6 +82,9 @@ public class NotificationService {
             notification.setDeleted(true);
             notificationRepository.save(notification);
         }
+
+        NotificationPreference preference = preferenceService.getByUserId(userId);
+        log.info("---Delete all notifications for [%s].".formatted(preference.getContactInfo()));
     }
 
     public void retryFailed(UUID userId) {
@@ -105,6 +110,8 @@ public class NotificationService {
 
             notificationRepository.save(failedNotification);
         }
+
+        log.info("---Retry failed notifications for [%s].".formatted(preference.getContactInfo()));
     }
 
     private void sendMail(SimpleMailMessage mailMessage, Notification notification) {

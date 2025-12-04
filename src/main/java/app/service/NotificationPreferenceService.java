@@ -4,6 +4,7 @@ import app.model.NotificationPreference;
 import app.model.NotificationType;
 import app.repository.NotificationPreferenceRepository;
 import app.web.dto.PreferenceRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class NotificationPreferenceService {
 
@@ -32,6 +34,8 @@ public class NotificationPreferenceService {
             preference.setContactInfo(request.getContactInfo());
             preference.setUpdatedOn(LocalDateTime.now());
 
+            log.info("---Upsert preference for [%s].".formatted(preference.getContactInfo()));
+
             return preferenceRepository.save(preference);
         }
 
@@ -43,6 +47,8 @@ public class NotificationPreferenceService {
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
                 .build();
+
+        log.info("---Upsert preference for [%s].".formatted(preference.getContactInfo()));
 
         return preferenceRepository.save(preference);
     }
