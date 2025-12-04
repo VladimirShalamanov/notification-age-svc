@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - app-network
+
+  new-age-project:
+    build:
+      context: ./new-age-project
+    container_name: new-age-project
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  notification-age-svc:
+    build:
+      context: ./notification-age-svc
+    container_name: notification-age-svc
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - kafka
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

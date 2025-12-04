@@ -126,8 +126,13 @@ public class NotificationUTest {
         Notification n1 = Notification.builder().deleted(false).build();
         Notification n2 = Notification.builder().deleted(false).build();
 
-        when(notificationRepository.findByUserId(userId)).thenReturn(List.of(n1, n2));
+        NotificationPreference pref = NotificationPreference.builder()
+                .contactInfo("test@example.com")
+                .enabled(true)
+                .build();
 
+        when(preferenceService.getByUserId(userId)).thenReturn(pref);
+        when(notificationRepository.findByUserId(userId)).thenReturn(List.of(n1, n2));
         when(notificationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         notificationService.deleteAll(userId);
